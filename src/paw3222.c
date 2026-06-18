@@ -400,7 +400,7 @@ static int paw32xx_configure(const struct device *dev) {
                 return ret;
             }
 #endif
-            k_sleep(K_MSEC(100)); // Wait before retrying
+            k_sleep(K_MSEC(200)); // Wait before retrying
             continue;
         }
         else {
@@ -441,7 +441,7 @@ static int paw32xx_init(const struct device *dev) {
     }
 
     //SPIbus安定化のために追記
-    k_sleep(K_MSEC(50));
+    k_sleep(K_MSEC(500));
 
     data->dev = dev;
 

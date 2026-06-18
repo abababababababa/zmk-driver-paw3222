@@ -1,6 +1,7 @@
 /*
  * Copyright 2024 Google LLC
  * Modifications Copyright 2025 sekigon-gonnoc
+ * Modifications Copyright 2026 abababababababa
  *
  * Original source code:
  * https://github.com/zephyrproject-rtos/zephyr/blob/19c6240b6865bcb28e1d786d4dcadfb3a02067a0/drivers/input/input_paw32xx.c
@@ -438,6 +439,9 @@ static int paw32xx_init(const struct device *dev) {
         return -ENODEV;
     }
 
+    //SPIbus安定化のために追記
+    k_sleep(K_MSEC(50));
+
     data->dev = dev;
 
     k_work_init(&data->motion_work, paw32xx_motion_work_handler);
@@ -514,9 +518,9 @@ static int paw32xx_init(const struct device *dev) {
     }
 
     ret = pm_device_runtime_enable(dev);
-    if (ret < 0) {
-        LOG_ERR("Failed to enable runtime power management: %d", ret);
-        return ret;
+        if (ret < 0 && ret != -ENOTSUP) {
+        LOG_WRN("Runtime PM not available: %d (continuing)", ret);
+    // Zephyr 4.1では init フェーズでの呼び出しが制限されるため無視
     }
 
     return 0;
@@ -591,7 +595,7 @@ static int paw32xx_pm_action(const struct device *dev, enum pm_device_action act
                  "invalid res-cpi");                                                               \
                                                                                                    \
     static const struct paw32xx_config paw32xx_cfg_##n = {                                         \
-        .spi = SPI_DT_SPEC_INST_GET(n, PAW32XX_SPI_MODE, 0),                                       \
+        .spi = SPI_DT_SPEC_INST_GET(n, PAW32XX_SPI_MODE),                                       \
         .irq_gpio = GPIO_DT_SPEC_INST_GET(n, irq_gpios),                                           \
         .power_gpio = GPIO_DT_SPEC_INST_GET_OR(n, power_gpios, {0}),                               \
         .res_cpi = DT_INST_PROP_OR(n, res_cpi, -1),                                                \

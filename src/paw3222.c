@@ -144,6 +144,7 @@ static int paw32xx_read_reg(const struct device *dev, uint8_t addr, uint8_t *val
     };
 
     ret = spi_transceive_dt(&cfg->spi, &tx, &rx);
+    LOG_ERR("spi_transceive ret=%d val=%02x", ret, *value); //デバッグ用
 
     return ret;
 }

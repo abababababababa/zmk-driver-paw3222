@@ -440,6 +440,10 @@ static int paw32xx_init(const struct device *dev) {
         return -ENODEV;
     }
 
+    //ログ取得
+    LOG_ERR("SPI bus: %s", cfg->spi.bus->name);
+    LOG_ERR("SPI CS port: %s pin: %d", cfg->spi.config.cs.gpio.port->name, cfg->spi.config.cs.gpio.pin);
+
     //SPIbus安定化のために追記
     k_sleep(K_MSEC(500));
 
